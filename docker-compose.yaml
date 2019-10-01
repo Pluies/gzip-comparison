@@ -1,0 +1,71 @@
+version: '3.5'
+
+services:
+  origin:
+    image: nginx
+    volumes:
+    - ./assets:/usr/share/nginx/html/assets
+    ports:
+    - 8000:80
+
+  nginx:
+    image: nginx
+    volumes:
+    - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+    - 8001:80
+
+  nginx-optimised:
+    image: nginx
+    volumes:
+    - ./nginx-optimised.conf:/etc/nginx/conf.d/default.conf
+    ports:
+    - 8002:80
+
+  ambassador:
+    image: quay.io/datawire/ambassador:0.81.0
+    ports:
+    - 8003:8080
+    volumes:
+    - ./ambassador.yaml:/ambassador/ambassador-config/config.yaml
+    environment:
+    - AMBASSADOR_NO_KUBEWATCH=no_kubewatch
+
+  ambassador-optimised:
+    image: quay.io/datawire/ambassador:0.81.0
+    ports:
+    - 8004:8080
+    volumes:
+    - ./ambassador-optimised.yaml:/ambassador/ambassador-config/config.yaml
+    environment:
+    - AMBASSADOR_NO_KUBEWATCH=no_kubewatch
+
+  envoy:
+    image: envoyproxy/envoy:v1.11.1
+    command: /usr/local/bin/envoy -c /config/envoy.yaml
+    volumes:
+    - ./envoy.yaml:/config/envoy.yaml
+    ports:
+    - 8005:8001
+
+  envoy-optimised:
+    image: envoyproxy/envoy:v1.11.1
+    command: /usr/local/bin/envoy -c /config/envoy.yaml
+    volumes:
+    - ./envoy-optimised.yaml:/config/envoy.yaml
+    ports:
+    - 8006:8001
+
+  apache:
+    image: httpd
+    volumes:
+    - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
+    ports:
+    - 8007:8080
+
+  apache-optimised:
+    image: httpd
+    volumes:
+    - ./httpd-optimised.conf:/usr/local/apache2/conf/httpd.conf
+    ports:
+    - 8008:8080

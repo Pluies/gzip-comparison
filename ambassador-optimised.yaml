@@ -1,0 +1,16 @@
+---
+apiVersion: ambassador/v1
+kind: Module
+name: ambassador
+config:
+  gzip:
+    enabled: true
+    memory_level: 9
+    compression_level: BEST
+---
+apiVersion: ambassador/v1
+kind:  Mapping
+name:  origin_mapping
+prefix: /
+service: origin
+host_rewrite: origin
