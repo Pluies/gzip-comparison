@@ -36,7 +36,17 @@ services:
     ports:
     - 8004:8080
     volumes:
-    - ./ambassador-optimised.yaml:/ambassador/ambassador-config/config.yaml
+    - ./ambassador-optimised-windowbits.yaml:/ambassador/ambassador-config/config.yaml
+    environment:
+    - AMBASSADOR_NO_KUBEWATCH=no_kubewatch
+
+  # NOTE: this is based on a local build of Ambassador, see https://github.com/datawire/ambassador/pull/1890
+  ambassador-optimised-windowbits:
+    image: ambassador:master-02ae75d9
+    ports:
+    - 8012:8080
+    volumes:
+    - ./ambassador-optimised-windowbits.yaml:/ambassador/ambassador-config/config.yaml
     environment:
     - AMBASSADOR_NO_KUBEWATCH=no_kubewatch
 
@@ -69,3 +79,25 @@ services:
     - ./httpd-optimised.conf:/usr/local/apache2/conf/httpd.conf
     ports:
     - 8008:8080
+
+  envoy-optimised-windowonly:
+    image: envoyproxy/envoy:v1.11.1
+    command: /usr/local/bin/envoy -c /config/envoy.yaml
+    volumes:
+    - ./envoy-optimised-windowonly.yaml:/config/envoy.yaml
+    ports:
+    - 8009:8001
+  envoy-optimised-windowonly-nobest:
+    image: envoyproxy/envoy:v1.11.1
+    command: /usr/local/bin/envoy -c /config/envoy.yaml
+    volumes:
+    - ./envoy-optimised-windowonly-nobest.yaml:/config/envoy.yaml
+    ports:
+    - 8010:8001
+  envoy-optimised-memorylevelonly:
+    image: envoyproxy/envoy:v1.11.1
+    command: /usr/local/bin/envoy -c /config/envoy.yaml
+    volumes:
+    - ./envoy-optimised-memorylevelonly.yaml:/config/envoy.yaml
+    ports:
+    - 8011:8001
